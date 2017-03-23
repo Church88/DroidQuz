@@ -1,5 +1,7 @@
 package com.example.jason.quizgame;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +15,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String KEY_INDEX = "index";
     private static final String KEY_SCORE = "score";
+    private static final String KEY_CHEATER = "cheat";
+    private static final String KEY_ANSWERED = "qna";
+    private static final int REQUEST_CHEAT_CODE = 0;
     private Button moptA;
     private Button moptB;
     private Button moptC;
@@ -20,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mNextButton;
     private Button mPrevButton;
     private Button mHintButton;
+    private Button mCheatButton;
     private TextView mQuestionTextView;
     private TextView mOptionA;
     private TextView mOptionB;
@@ -30,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Question> mQuestionBank = new ArrayList<>();
     private int mCurrentIndex = 0;
     private Integer mScore = 0;
+    private boolean mIsCheater;
+    private boolean misCorrect;
 
     private void updateQuestion(){
         Log.d(TAG, "Updating question text for question #" + mCurrentIndex, new Exception());
@@ -45,21 +53,42 @@ public class MainActivity extends AppCompatActivity {
         mOptionC.setText(optC);
         mOptionD.setText(optD);
         hintToastBlank.setText("");
-
+        misCorrect = mQuestionBank.get(mCurrentIndex).is_correct();
+        mScoreTextView.setText(String.valueOf("Score is: " + mScore));
     }
     private void checkAnswer(String userInput){
         String correctAnswer = mQuestionBank.get(mCurrentIndex).getAnswer();
         int messageResId = 0;
         if(userInput.equals(correctAnswer)){
-            messageResId =R.string.correct_toast;
+            if(mIsCheater){
+                messageResId = R.string.judgement_toast;
+                Toast.makeText(this,messageResId,Toast.LENGTH_SHORT).show();
+                return;
+            }
+            else messageResId =R.string.correct_toast;
             if(!mQuestionBank.get(mCurrentIndex).is_correct()) {
                 mScore++;
-                mScoreTextView.setText(String.valueOf("" + mScore));
+                mScoreTextView.setText(String.valueOf("Score is: " + mScore));
                 mQuestionBank.get(mCurrentIndex).setIs_correct(true);
             }
         }
-        else messageResId = R.string.incorrect_toast;
+        else {
+            messageResId = R.string.incorrect_toast;
+            mScore--;
+            if(mScore<0) mScore = 0;
+            mScoreTextView.setText(String.valueOf("Score is: " + mScore));
+        }
         Toast.makeText(this,messageResId,Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(resultCode != Activity.RESULT_OK){
+            return;
+        }
+        if(requestCode == REQUEST_CHEAT_CODE){
+            if(data == null) return;
+            mIsCheater = CheatActivity.wasAnswerShown(data);
+        }
     }
     @Override
     public void onStart(){
@@ -89,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "onSaveInstanceState");
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
         savedInstanceState.putInt(KEY_SCORE, mScore);
+        savedInstanceState.putBoolean(KEY_CHEATER,mIsCheater);
+        savedInstanceState.putBoolean(KEY_ANSWERED,misCorrect);
     }
 
     @Override
@@ -98,12 +129,19 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"onCreat(Bunblde) called");
         setContentView(R.layout.activity_main);
 
+
+
         mQuestionBank.add(new Question(R.string.question_1,"D",R.string.Question1A,R.string.Question1B,R.string.Question1C,R.string.Question1D,R.string.Hint1_toast,false));
         mQuestionBank.add(new Question(R.string.question_2,"B",R.string.Question2A,R.string.Question2B,R.string.Question2C,R.string.Question2D,R.string.Hint2_toast,false));
         mQuestionBank.add(new Question(R.string.question_3,"A",R.string.Question3A,R.string.Question3B,R.string.Question3C,R.string.Question3D,R.string.Hint3_toast,false));
         mQuestionBank.add(new Question(R.string.question_4,"C",R.string.Question4A,R.string.Question4B,R.string.Question4C,R.string.Question4D,R.string.Hint4_toast,false));
         mQuestionBank.add(new Question(R.string.question_5,"A",R.string.Question5A,R.string.Question5B,R.string.Question5C,R.string.Question5D,R.string.Hint5_toast,false));
-
+        if(savedInstanceState != null){
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+            mScore = savedInstanceState.getInt(KEY_SCORE, 0);
+            mIsCheater = savedInstanceState.getBoolean(KEY_CHEATER, false);
+            misCorrect = savedInstanceState.getBoolean(KEY_ANSWERED, false);
+        }
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
         mOptionA = (TextView) findViewById(R.id.option_A_view);
         mOptionB = (TextView) findViewById(R.id.option_B_view);
@@ -112,8 +150,16 @@ public class MainActivity extends AppCompatActivity {
         hintToastBlank = (TextView) findViewById(R.id.hint_view);
         hintToastBlank.setText(" ");
         mScoreTextView = (TextView) findViewById(R.id.score_view);
-        mScoreTextView.setText(String.valueOf("" + mScore));
-
+        mScoreTextView.setText(String.valueOf("Score: " + mScore));
+        mCheatButton = (Button) findViewById(R.id.cheat_button);
+        mCheatButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                String answerIs = mQuestionBank.get(mCurrentIndex).getAnswer();
+                Intent godMode = CheatActivity.newIntent(MainActivity.this,answerIs);
+                startActivityForResult(godMode,REQUEST_CHEAT_CODE);
+            }
+        });
         moptA = (Button) findViewById(R.id.optA);
         moptA.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -129,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         moptC = (Button) findViewById(R.id.optC);
-
         moptC.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -150,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
                 int new_index = mCurrentIndex+1;
                 if(mCurrentIndex==mQuestionBank.size()-1) new_index = mQuestionBank.size()-1;
                 mCurrentIndex = (new_index)%mQuestionBank.size();
+                mIsCheater = false;
                 updateQuestion();
             }
         });
@@ -160,14 +206,10 @@ public class MainActivity extends AppCompatActivity {
                 int new_index = 0;
                 if(mCurrentIndex!=0) new_index = mCurrentIndex-1;
                 mCurrentIndex = (new_index)%mQuestionBank.size();
+                mIsCheater = false;
                 updateQuestion();
             }
         });
-
-        if(savedInstanceState != null){
-            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
-            mScore = savedInstanceState.getInt(KEY_SCORE, 0);
-        }
         mHintButton = (Button) findViewById(R.id.hint_button);
         mHintButton.setOnClickListener(new View.OnClickListener(){
             @Override
