@@ -7,9 +7,8 @@ public class Question {
     private int mOptC;
     private int mOptD;
     private int hint;
-    private boolean is_correct;
 
-    public Question(int mTextResId, String mAnswer, int mOptA, int mOptB, int mOptC, int mOptD, int hint, boolean is_correct) {
+    public Question(int mTextResId, String mAnswer, int mOptA, int mOptB, int mOptC, int mOptD, int hint) {
         this.mTextResId = mTextResId;
         this.mAnswer = mAnswer;
         this.mOptA = mOptA;
@@ -17,17 +16,7 @@ public class Question {
         this.mOptC = mOptC;
         this.mOptD = mOptD;
         this.hint = hint;
-        this.is_correct = is_correct;
     }
-
-    public boolean is_correct() {
-        return is_correct;
-    }
-
-    public void setIs_correct(boolean is_correct) {
-        this.is_correct = is_correct;
-    }
-
     public int getHint() {
         return hint;
     }

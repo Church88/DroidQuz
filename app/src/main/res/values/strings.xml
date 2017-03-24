@@ -1,53 +1,57 @@
 <resources>
-<string name="app_name">QuizGame</string>
-<string name="title_text">The Skookum Test</string>
-<string name="question_1">Does a Makita chooch?</string>
-<string name="question_2">What is the optimum chooch factor?</string>
-<string name="question_3">What is an acceptable title for Harbor Freight?</string>
-<string name="question_4">Where are Fein tools made?</string>
-<string name="question_5">What is the best tool for the job?</string>
+    <string name="app_name">QuizGame</string>
+    <string name="title_text">The Skookum Test</string>
+    <string name="question_1">Does a Makita chooch?</string>
+    <string name="question_2">What is the optimum chooch factor?</string>
+    <string name="question_3">What is an acceptable title for Harbor Freight?</string>
+    <string name="question_4">Where are Fein tools made?</string>
+    <string name="question_5">What is the best tool for the job?</string>
 
-<string name="next_button">Next</string>
-<string name="prev_button">Prev</string>
-<string name="hint_button">Hint</string>
+    <string name="next_button">Next</string>
+    <string name="prev_button">Prev</string>
+    <string name="hint_button">Hint</string>
 
-<string name="first_button">A. </string>
-<string name="second_button">B. </string>
-<string name="third_button">C. </string>
-<string name="fourth_button">D. </string>
-
-
-<string name="Question1A">Negatory good buddy</string>
-<string name="Question1B">It will let out the smoke</string>
-<string name="Question1C">You will need to increase the chooch factor</string>
-<string name="Question1D">Like a skookum choocher</string>
-<string name="Hint1_toast">One might say it can eat a hot supper</string>
-
-<string name="Question2A">5</string>
-<string name="Question2B">11</string>
-<string name="Question2C">7</string>
-<string name="Question2D">43</string>
-<string name="Hint2_toast">You\'re probably over thinking this</string>
+    <string name="first_button">A. </string>
+    <string name="second_button">B. </string>
+    <string name="third_button">C. </string>
+    <string name="fourth_button">D. </string>
 
 
-<string name="Question3A">All of the below</string>
-<string name="Question3B">China Imports</string>
-<string name="Question3C">Hazard Frought</string>
-<string name="Question3D">Chinesium Incorporated</string>
-<string name="Hint3_toast">Which one is not funny?</string>
+    <string name="Question1A">Negatory good buddy</string>
+    <string name="Question1B">It will let out the smoke</string>
+    <string name="Question1C">You will need to increase the chooch factor</string>
+    <string name="Question1D">Like a skookum choocher</string>
+    <string name="Hint1_toast">One might say it can eat a hot supper</string>
 
-<string name="Question4A">China</string>
-<string name="Question4B">Japan</string>
-<string name="Question4C">Germany</string>
-<string name="Question4D">England</string>
-<string name="Hint4_toast">One might say these are superior tools</string>
+    <string name="Question2A">5</string>
+    <string name="Question2B">11</string>
+    <string name="Question2C">7</string>
+    <string name="Question2D">43</string>
+    <string name="Hint2_toast">You\'re probably over thinking this</string>
 
-<string name="Question5A">The easiest one</string>
-<string name="Question5B">The heaviest one</string>
-<string name="Question5C">The most expensive one</string>
-<string name="Question5D">The closest thing resembling a hammer</string>
-<string name="Hint5_toast">Keep it simple</string>
 
-<string name="correct_toast">Correct!</string>
-<string name="incorrect_toast">Incorrect!</string>
+    <string name="Question3A">All of the below</string>
+    <string name="Question3B">China Imports</string>
+    <string name="Question3C">Hazard Frought</string>
+    <string name="Question3D">Chinesium Incorporated</string>
+    <string name="Hint3_toast">Which one is not funny?</string>
+
+    <string name="Question4A">China</string>
+    <string name="Question4B">Japan</string>
+    <string name="Question4C">Germany</string>
+    <string name="Question4D">England</string>
+    <string name="Hint4_toast">One might say these are superior tools</string>
+
+    <string name="Question5A">The easiest one</string>
+    <string name="Question5B">The heaviest one</string>
+    <string name="Question5C">The most expensive one</string>
+    <string name="Question5D">The closest thing resembling a hammer</string>
+    <string name="Hint5_toast">Keep it simple</string>
+
+    <string name="correct_toast">Correct!</string>
+    <string name="incorrect_toast">Incorrect!</string>
+    <string name="warning_text">Are you sure you want to do this?</string>
+    <string name="show_answer_button">Show Answer</string>
+    <string name="cheat_button">Cheat!</string>
+    <string name="judgement_toast">Cheating is wrong</string>
 </resources>

@@ -15,8 +15,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String KEY_INDEX = "index";
     private static final String KEY_SCORE = "score";
-    private static final String KEY_CHEATER = "cheat";
-    private static final String KEY_ANSWERED = "qna";
+    private static final String KEY_CHEATERS = "cheat";
+    private static final String KEY_ANSWERED = "answered";
     private static final int REQUEST_CHEAT_CODE = 0;
     private Button moptA;
     private Button moptB;
@@ -34,10 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView hintToastBlank;
     private TextView mScoreTextView;
     private ArrayList<Question> mQuestionBank = new ArrayList<>();
+    private ArrayList<Integer> mCheaters = new ArrayList<>();
+    private ArrayList<Integer> mAnswered = new ArrayList<>();
     private int mCurrentIndex = 0;
     private Integer mScore = 0;
-    private boolean mIsCheater;
-    private boolean misCorrect;
 
     private void updateQuestion(){
         Log.d(TAG, "Updating question text for question #" + mCurrentIndex, new Exception());
@@ -53,23 +53,23 @@ public class MainActivity extends AppCompatActivity {
         mOptionC.setText(optC);
         mOptionD.setText(optD);
         hintToastBlank.setText("");
-        misCorrect = mQuestionBank.get(mCurrentIndex).is_correct();
         mScoreTextView.setText(String.valueOf("Score is: " + mScore));
     }
     private void checkAnswer(String userInput){
         String correctAnswer = mQuestionBank.get(mCurrentIndex).getAnswer();
         int messageResId = 0;
         if(userInput.equals(correctAnswer)){
-            if(mIsCheater){
+            if(mCheaters.get(mCurrentIndex) != 1){
+                mAnswered.set(mCurrentIndex,0);
                 messageResId = R.string.judgement_toast;
                 Toast.makeText(this,messageResId,Toast.LENGTH_SHORT).show();
                 return;
             }
-            else messageResId =R.string.correct_toast;
-            if(!mQuestionBank.get(mCurrentIndex).is_correct()) {
+            else messageResId = R.string.correct_toast;
+            if(mAnswered.get(mCurrentIndex) == 1) {
                 mScore++;
                 mScoreTextView.setText(String.valueOf("Score is: " + mScore));
-                mQuestionBank.get(mCurrentIndex).setIs_correct(true);
+                mAnswered.set(mCurrentIndex,0);
             }
         }
         else {
@@ -87,7 +87,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if(requestCode == REQUEST_CHEAT_CODE){
             if(data == null) return;
-            mIsCheater = CheatActivity.wasAnswerShown(data);
+            if(CheatActivity.wasAnswerShown(data)){
+                mCheaters.set(mCurrentIndex,0);
+            }
         }
     }
     @Override
@@ -118,30 +120,31 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "onSaveInstanceState");
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
         savedInstanceState.putInt(KEY_SCORE, mScore);
-        savedInstanceState.putBoolean(KEY_CHEATER,mIsCheater);
-        savedInstanceState.putBoolean(KEY_ANSWERED,misCorrect);
+        savedInstanceState.putIntegerArrayList(KEY_CHEATERS,mCheaters);
+        savedInstanceState.putIntegerArrayList(KEY_ANSWERED,mAnswered);
     }
-
+    //TODO static fucntion to populate Cheaters and Answered Arrays to 1
+    public static void populate(Integer size, ArrayList<Integer> a, ArrayList<Integer> b){
+        Log.d(TAG,"populate called");
+        for(int i = 0; i < size; i ++){
+            a.add(1);
+            b.add(1);
+    }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         Log.d(TAG,"onCreat(Bunblde) called");
         setContentView(R.layout.activity_main);
 
-
-
-        mQuestionBank.add(new Question(R.string.question_1,"D",R.string.Question1A,R.string.Question1B,R.string.Question1C,R.string.Question1D,R.string.Hint1_toast,false));
-        mQuestionBank.add(new Question(R.string.question_2,"B",R.string.Question2A,R.string.Question2B,R.string.Question2C,R.string.Question2D,R.string.Hint2_toast,false));
-        mQuestionBank.add(new Question(R.string.question_3,"A",R.string.Question3A,R.string.Question3B,R.string.Question3C,R.string.Question3D,R.string.Hint3_toast,false));
-        mQuestionBank.add(new Question(R.string.question_4,"C",R.string.Question4A,R.string.Question4B,R.string.Question4C,R.string.Question4D,R.string.Hint4_toast,false));
-        mQuestionBank.add(new Question(R.string.question_5,"A",R.string.Question5A,R.string.Question5B,R.string.Question5C,R.string.Question5D,R.string.Hint5_toast,false));
-        if(savedInstanceState != null){
-            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
-            mScore = savedInstanceState.getInt(KEY_SCORE, 0);
-            mIsCheater = savedInstanceState.getBoolean(KEY_CHEATER, false);
-            misCorrect = savedInstanceState.getBoolean(KEY_ANSWERED, false);
-        }
+        mQuestionBank.add(new Question(R.string.question_1,"D",R.string.Question1A,R.string.Question1B,R.string.Question1C,R.string.Question1D,R.string.Hint1_toast));
+        mQuestionBank.add(new Question(R.string.question_2,"B",R.string.Question2A,R.string.Question2B,R.string.Question2C,R.string.Question2D,R.string.Hint2_toast));
+        mQuestionBank.add(new Question(R.string.question_3,"A",R.string.Question3A,R.string.Question3B,R.string.Question3C,R.string.Question3D,R.string.Hint3_toast));
+        mQuestionBank.add(new Question(R.string.question_4,"C",R.string.Question4A,R.string.Question4B,R.string.Question4C,R.string.Question4D,R.string.Hint4_toast));
+        mQuestionBank.add(new Question(R.string.question_5,"A",R.string.Question5A,R.string.Question5B,R.string.Question5C,R.string.Question5D,R.string.Hint5_toast));
+        Log.d(TAG,"bank set up");
+        populate(mQuestionBank.size(),mCheaters,mAnswered);
+        Log.d(TAG,"populate worked");
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
         mOptionA = (TextView) findViewById(R.id.option_A_view);
         mOptionB = (TextView) findViewById(R.id.option_B_view);
@@ -195,7 +198,6 @@ public class MainActivity extends AppCompatActivity {
                 int new_index = mCurrentIndex+1;
                 if(mCurrentIndex==mQuestionBank.size()-1) new_index = mQuestionBank.size()-1;
                 mCurrentIndex = (new_index)%mQuestionBank.size();
-                mIsCheater = false;
                 updateQuestion();
             }
         });
@@ -206,7 +208,6 @@ public class MainActivity extends AppCompatActivity {
                 int new_index = 0;
                 if(mCurrentIndex!=0) new_index = mCurrentIndex-1;
                 mCurrentIndex = (new_index)%mQuestionBank.size();
-                mIsCheater = false;
                 updateQuestion();
             }
         });
@@ -217,6 +218,12 @@ public class MainActivity extends AppCompatActivity {
                 hintToastBlank.setText(mQuestionBank.get(mCurrentIndex).getHint());
             }
         });
+        if(savedInstanceState != null){
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+            mScore = savedInstanceState.getInt(KEY_SCORE, 0);
+            mCheaters = savedInstanceState.getIntegerArrayList(KEY_CHEATERS);
+            mAnswered = savedInstanceState.getIntegerArrayList(KEY_ANSWERED);
+        }
         updateQuestion();
 
     }
